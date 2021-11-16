@@ -2,4 +2,4 @@
 
 [An ancient indian game](https://en.wikipedia.org/wiki/Snakes_and_ladders)
 
-
+![](image.png "Snake and Ladder")
