@@ -6,8 +6,8 @@ use std::io;
 
 #[derive(Debug)]
 enum ColType {
-    Ladder(usize),
-    Snake(usize),
+    Ladder(usize), // usize will determine where the ladder will take the player
+    Snake(usize),  // usize will determine where the snake will take the player
 }
 
 #[derive(Debug)]
@@ -39,6 +39,23 @@ impl Board {
     fn get_col_data(&self, col_id: usize) {
         println!("{:#?}", self.cols[col_id - 1]);
     }
+
+    fn set_col_prop(&mut self, col_id: usize, ct: ColType) {
+        // self.cols[col_id - 1].col_type = Some(ct);
+        println!(
+            "The col {} is pointing to {}",
+            col_id - 1,
+            match &ct {
+                ColType::Snake(v) => v,
+                ColType::Ladder(v) => v,
+            }
+        );
+        self.cols[col_id - 1].col_type = Some(ct);
+    }
+}
+
+fn clear_screen() {
+    print!("{esc}c", esc = 27 as char);
 }
 
 // impl Display for Board {
@@ -53,6 +70,7 @@ fn get_input() {
     let mut buffer = String::new();
     let board = Board::new();
     loop {
+        clear_screen();
         println!("\n________________________\n");
         println!("Please enter an option");
         println!("        [2] Display Columns");
@@ -73,20 +91,28 @@ fn get_input() {
                 break;
             }
             "1" => {
-                std::process::Command::new("clear").status().unwrap();
+                clear_screen();
                 let mut admin = String::new();
-                io::stdin().read_line(&mut admin).unwrap();
                 println!("----------------------");
                 println!("[1] List players");
                 println!("[2] Add player");
+                println!("[3] Modify column property");
+                io::stdin().read_line(&mut admin).unwrap();
                 match admin.trim() {
                     "1" => {
                         println!("Player list");
                     }
                     "2" => {
                         println!("Add your player");
-                    },
-                    _ => println!("Invalid input")
+                    }
+                    "3" => {
+                        clear_screen();
+                        println!("----------------------");
+                        println!("Enter col and type");
+                        println!("[1] for ladder")
+
+                    }
+                    _ => println!("Invalid input"),
                 }
             }
             _ => println!("Invalid input"),
