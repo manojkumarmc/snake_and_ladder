@@ -21,7 +21,9 @@ fn get_input() {
         println!("        [1] Admin");
         println!("        [0] Exit");
         println!("________________________");
-        // thread::sleep(std::time::Duration::from_secs(1));
+        /*
+        thread::sleep(std::time::Duration::from_secs(1));
+        */
         buffer.clear();
         io::stdin().read_line(&mut buffer).unwrap();
         println!("You  entered {}", buffer);
@@ -50,7 +52,7 @@ fn get_input() {
                     "2" => {
                         println!("Add your player");
                     }
-                    "3" => {
+                    "3" => loop {
                         utils::clear_screen();
                         println!("----------------------");
                         println!("Enter cols and type");
@@ -61,9 +63,38 @@ fn get_input() {
                         col_mod.clear();
                         io::stdin().read_line(&mut col_mod).unwrap();
                         let cv: Vec<&str> = col_mod.split_whitespace().collect();
-                        println!("{} {} {}", cv[0], cv[1], cv[2] );
-
-                    }
+                        if cv.len().ne(&3) {
+                            println!("Invalid format");
+                            utils::wait_to_proceed();
+                            break;
+                        }
+                        println!("{} {} {}", cv[0], cv[1], cv[2]);
+                        let lv = cv[0].parse::<usize>().unwrap();
+                        let rv = cv[2].parse::<usize>().unwrap();
+                        match cv[1] {
+                            "S" => {
+                                if rv.gt(&lv) {
+                                    println!("The tail cannot be greater than the head");
+                                    utils::wait_to_proceed();
+                                } else {
+                                    println!("Good choice");
+                                    utils::wait_to_proceed();
+                                    break;
+                                }
+                            }
+                            "L" => {
+                                if lv.gt(&rv) {
+                                    println!("The ladder will always have to go up");
+                                    utils::wait_to_proceed();
+                                } else {
+                                    println!("Good choice");
+                                    utils::wait_to_proceed();
+                                    break;
+                                }
+                            }
+                            _ => println!("Invalid character"),
+                        }
+                    },
                     _ => println!("Invalid input"),
                 }
             }
