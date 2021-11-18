@@ -1,66 +1,10 @@
 use rand::prelude::*;
 use std::io;
-// use std::format::Display;
+
+mod model;
+mod utils;
 
 // use std::thread;
-
-#[derive(Debug)]
-enum ColType {
-    Ladder(usize), // usize will determine where the ladder will take the player
-    Snake(usize),  // usize will determine where the snake will take the player
-}
-
-#[derive(Debug)]
-struct Col {
-    col_id: usize,
-    col_type: Option<ColType>,
-}
-
-#[derive(Debug)]
-struct Board {
-    cols: Vec<Col>,
-}
-
-impl Board {
-    fn new() -> Board {
-        let mut vc = Vec::new();
-        for i in 0..100 {
-            vc.insert(
-                i,
-                Col {
-                    col_id: i,
-                    col_type: None,
-                },
-            )
-        }
-        Board { cols: vc }
-    }
-
-    fn get_col_data(&self, col_id: usize) {
-        println!("{:#?}", self.cols[col_id - 1]);
-    }
-
-    fn set_col_prop(&mut self, col_id: usize, ct: ColType) {
-        // self.cols[col_id - 1].col_type = Some(ct);
-        println!(
-            "The col {} is pointing to {}",
-            col_id - 1,
-            match &ct {
-                ColType::Snake(v) => v,
-                ColType::Ladder(v) => v,
-            }
-        );
-        self.cols[col_id - 1].col_type = Some(ct);
-    }
-}
-
-fn clear_screen() {
-    print!("{esc}c", esc = 27 as char);
-}
-
-// impl Display for Board {
-//     todo!();
-// }
 
 fn main() {
     get_input();
@@ -68,9 +12,9 @@ fn main() {
 
 fn get_input() {
     let mut buffer = String::new();
-    let board = Board::new();
+    let board = model::Board::new();
     loop {
-        clear_screen();
+        utils::clear_screen();
         println!("\n________________________\n");
         println!("Please enter an option");
         println!("        [2] Display Columns");
@@ -91,8 +35,9 @@ fn get_input() {
                 break;
             }
             "1" => {
-                clear_screen();
+                utils::clear_screen();
                 let mut admin = String::new();
+                admin.clear();
                 println!("----------------------");
                 println!("[1] List players");
                 println!("[2] Add player");
@@ -106,10 +51,17 @@ fn get_input() {
                         println!("Add your player");
                     }
                     "3" => {
-                        clear_screen();
+                        utils::clear_screen();
                         println!("----------------------");
-                        println!("Enter col and type");
-                        println!("[1] for ladder")
+                        println!("Enter cols and type");
+                        println!("Format: <col> <S|L> <col>");
+                        println!("10 S 3 => Snake with head on 10 and tail on 3");
+                        println!("2 L 30 => Ladder from col 2 to col 30");
+                        let mut col_mod = String::new();
+                        col_mod.clear();
+                        io::stdin().read_line(&mut col_mod).unwrap();
+                        let cv: Vec<&str> = col_mod.split_whitespace().collect();
+                        println!("{} {} {}", cv[0], cv[1], cv[2] );
 
                     }
                     _ => println!("Invalid input"),

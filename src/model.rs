@@ -1,0 +1,49 @@
+#[derive(Debug)]
+pub enum ColType {
+    Ladder(usize), // usize will determine where the ladder will take the player
+    Snake(usize),  // usize will determine where the snake will take the player
+}
+
+#[derive(Debug)]
+pub struct Col {
+    pub col_id: usize,
+    pub col_type: Option<ColType>,
+}
+
+#[derive(Debug)]
+pub struct Board {
+    pub cols: Vec<Col>,
+}
+
+impl Board {
+    pub fn new() -> Board {
+        let mut vc = Vec::new();
+        for i in 0..100 {
+            vc.insert(
+                i,
+                Col {
+                    col_id: i,
+                    col_type: None,
+                },
+            )
+        }
+        Board { cols: vc }
+    }
+
+    pub fn get_col_data(&self, col_id: usize) {
+        println!("{:#?}", self.cols[col_id - 1]);
+    }
+
+    pub fn set_col_prop(&mut self, col_id: usize, ct: ColType) {
+        // self.cols[col_id - 1].col_type = Some(ct);
+        println!(
+            "The col {} is pointing to {}",
+            col_id - 1,
+            match &ct {
+                ColType::Snake(v) => v,
+                ColType::Ladder(v) => v,
+            }
+        );
+        self.cols[col_id - 1].col_type = Some(ct);
+    }
+}
