@@ -47,3 +47,18 @@ impl Board {
         self.cols[col_id - 1].col_type = Some(ct);
     }
 }
+
+#[derive(Debug)]
+pub struct Player {
+    id: usize,
+    name: String,
+}
+
+impl Player {
+    pub fn new(i: usize, n: String) -> Self {
+        Player { id: i, name: n }
+    }
+    pub fn set_name(&mut self, n: &'static str) {
+        self.name = n.to_string();
+    }
+}

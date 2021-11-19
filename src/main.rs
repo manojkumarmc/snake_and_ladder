@@ -1,3 +1,4 @@
+use model::Player;
 use rand::prelude::*;
 use std::io;
 
@@ -18,6 +19,7 @@ fn main() {
 fn get_input() {
     let mut buffer = String::new();
     let mut board = model::Board::new();
+    let player_list = get_players();
     loop {
         clear_screen();
         println!("\n________________________\n");
@@ -43,28 +45,37 @@ fn get_input() {
                 break;
             }
             "1" => {
-                clear_screen();
                 let mut admin = String::new();
                 admin.clear();
-                println!("----------------------");
+                println!("___________________________");
                 println!("[1] List players");
                 println!("[2] Add player");
                 println!("[3] Modify column property");
+                println!("___________________________");
                 io::stdin().read_line(&mut admin).unwrap();
                 match admin.trim() {
                     "1" => {
                         println!("Player list");
+                        for pl in player_list.iter() {
+                            println!("{:#?}", pl);
+                        }
+                        wait_to_proceed();
                     }
                     "2" => {
                         println!("Add your player");
+                        if player_list.len() == 2 {
+                            println!("Cant add player");
+                            wait_to_proceed();
+                        }
                     }
                     "3" => loop {
                         clear_screen();
-                        println!("----------------------");
+                        println!("---------------------------");
                         println!("Enter cols and type");
                         println!("Format: <col> <S|L> <col>");
                         println!("10 S 3 => Snake with head on 10 and tail on 3");
                         println!("2 L 30 => Ladder from col 2 to col 30");
+                        println!("___________________________");
                         let mut col_mod = String::new();
                         col_mod.clear();
                         io::stdin().read_line(&mut col_mod).unwrap();
@@ -109,4 +120,12 @@ fn get_input() {
             _ => println!("Invalid input"),
         }
     }
+}
+
+fn get_players() -> Vec<Player> {
+    let mut pl: Vec<Player> = Vec::new();
+    for x in 1..=2 {
+        pl.insert(0, Player::new(x, format!("Player{}", x)));
+    }
+    pl
 }
