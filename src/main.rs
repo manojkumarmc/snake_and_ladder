@@ -18,7 +18,7 @@ fn main() {
 
 fn get_input() {
     let mut buffer = String::new();
-    let mut board = model::Board::new();
+    let mut board = Board::new();
     let player_list = get_players();
     loop {
         clear_screen();
@@ -37,7 +37,7 @@ fn get_input() {
         match buffer.trim() {
             "2" => {
                 let mut rn = rand::thread_rng();
-                println!("{:#?}", board.cols[rn.gen_range(0..99)]);
+                println!("{:#?}", board.cols[rn.gen_range(1..=100)]);
                 wait_to_proceed();
             }
             "0" => {
