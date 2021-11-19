@@ -1,6 +1,11 @@
 use rand::prelude::*;
 use std::io;
 
+use crate::{
+    model::{Board, ColType},
+    utils::{clear_screen, wait_to_proceed},
+};
+
 mod model;
 mod utils;
 
@@ -12,9 +17,9 @@ fn main() {
 
 fn get_input() {
     let mut buffer = String::new();
-    let board = model::Board::new();
+    let mut board = model::Board::new();
     loop {
-        utils::clear_screen();
+        clear_screen();
         println!("\n________________________\n");
         println!("Please enter an option");
         println!("        [2] Display Columns");
@@ -30,14 +35,15 @@ fn get_input() {
         match buffer.trim() {
             "2" => {
                 let mut rn = rand::thread_rng();
-                println!("{:#?}", board.cols[rn.gen_range(0..99)])
+                println!("{:#?}", board.cols[rn.gen_range(0..99)]);
+                wait_to_proceed();
             }
             "0" => {
                 println!("Exit");
                 break;
             }
             "1" => {
-                utils::clear_screen();
+                clear_screen();
                 let mut admin = String::new();
                 admin.clear();
                 println!("----------------------");
@@ -53,7 +59,7 @@ fn get_input() {
                         println!("Add your player");
                     }
                     "3" => loop {
-                        utils::clear_screen();
+                        clear_screen();
                         println!("----------------------");
                         println!("Enter cols and type");
                         println!("Format: <col> <S|L> <col>");
@@ -65,7 +71,7 @@ fn get_input() {
                         let cv: Vec<&str> = col_mod.split_whitespace().collect();
                         if cv.len().ne(&3) {
                             println!("Invalid format");
-                            utils::wait_to_proceed();
+                            wait_to_proceed();
                             break;
                         }
                         println!("{} {} {}", cv[0], cv[1], cv[2]);
@@ -75,20 +81,22 @@ fn get_input() {
                             "S" => {
                                 if rv.gt(&lv) {
                                     println!("The tail cannot be greater than the head");
-                                    utils::wait_to_proceed();
+                                    wait_to_proceed();
                                 } else {
                                     println!("Good choice");
-                                    utils::wait_to_proceed();
+                                    board.set_col_prop(lv, ColType::Snake(rv));
+                                    wait_to_proceed();
                                     break;
                                 }
                             }
                             "L" => {
                                 if lv.gt(&rv) {
                                     println!("The ladder will always have to go up");
-                                    utils::wait_to_proceed();
+                                    wait_to_proceed();
                                 } else {
                                     println!("Good choice");
-                                    utils::wait_to_proceed();
+                                    board.set_col_prop(lv, ColType::Ladder(rv));
+                                    wait_to_proceed();
                                     break;
                                 }
                             }
