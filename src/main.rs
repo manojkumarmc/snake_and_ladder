@@ -19,7 +19,7 @@ fn main() {
 fn get_input() {
     let mut buffer = String::new();
     let mut board = Board::new();
-    let player_list = get_players();
+    let mut player_list = get_players();
     loop {
         clear_screen();
         println!("\n________________________\n");
@@ -65,6 +65,9 @@ fn get_input() {
                         println!("Add your player");
                         if player_list.len() == 2 {
                             println!("Cant add player");
+                            wait_to_proceed();
+                        } else {
+                            player_list.insert(0, Player::new(player_list.len(), format!("Player{}", player_list.len())));
                             wait_to_proceed();
                         }
                     }
