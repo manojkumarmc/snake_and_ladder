@@ -20,7 +20,7 @@ impl Board {
         let mut vc = Vec::new();
         for i in 1..=100 {
             vc.insert(
-                i,
+                0,
                 Col {
                     col_id: i,
                     col_type: None,
