@@ -39,13 +39,13 @@ impl Board {
         // self.cols[col_id - 1].col_type = Some(ct);
         println!(
             "The col {} is pointing to {}",
-            col_id,
+            col_id - 1,
             match &ct {
                 ColType::Snake(v) => v,
                 ColType::Ladder(v) => v,
             }
         );
-        self.cols[col_id].col_type = Some(ct);
+        self.cols[col_id - 1].col_type = Some(ct);
     }
 }
 

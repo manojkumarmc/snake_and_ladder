@@ -100,7 +100,7 @@ fn get_input() {
                                     wait_to_proceed();
                                 } else {
                                     println!("Good choice");
-                                    board.set_col_prop(lv - 1, ColType::Snake(rv));
+                                    board.set_col_prop(lv, ColType::Snake(rv));
                                     wait_to_proceed();
                                     break;
                                 }
@@ -111,7 +111,7 @@ fn get_input() {
                                     wait_to_proceed();
                                 } else {
                                     println!("Good choice");
-                                    board.set_col_prop(lv - 1, ColType::Ladder(rv));
+                                    board.set_col_prop(lv, ColType::Ladder(rv));
                                     wait_to_proceed();
                                     break;
                                 }
