@@ -69,7 +69,13 @@ fn get_input() {
                             println!("Cant add player");
                             wait_to_proceed();
                         } else {
-                            player_list.insert(0, Player::new(player_list.len(), format!("Player{}", player_list.len())));
+                            player_list.insert(
+                                0,
+                                Player::new(
+                                    player_list.len(),
+                                    format!("Player{}", player_list.len()),
+                                ),
+                            );
                             wait_to_proceed();
                         }
                     }
@@ -91,8 +97,18 @@ fn get_input() {
                             break;
                         }
                         println!("{} {} {}", cv[0], cv[1], cv[2]);
-                        let lv = cv[0].parse::<usize>().unwrap();
-                        let rv = cv[2].parse::<usize>().unwrap();
+                        let lv = cv[0].parse::<usize>().unwrap_or(usize::MIN);
+                        let rv = cv[2].parse::<usize>().unwrap_or(usize::MAX);
+                        if lv < model::MIN_COL || lv > model::MAX_COL {
+                            println!("Invalid input {}", lv);
+                            wait_to_proceed();
+                            break;
+                        }
+                        if rv < model::MIN_COL || rv > model::MAX_COL {
+                            println!("Invalid input {}", rv);
+                            wait_to_proceed();
+                            break;
+                        }
                         match cv[1] {
                             "S" => {
                                 if rv.gt(&lv) {
@@ -119,7 +135,7 @@ fn get_input() {
                             _ => println!("Invalid character"),
                         }
                     },
-                    "4"=> {
+                    "4" => {
                         println!("list snake and ladder columns")
                     }
                     _ => println!("Invalid input"),

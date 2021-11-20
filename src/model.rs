@@ -1,11 +1,17 @@
+use validator::{Validate};
+
+pub const MIN_COL: usize = 1;
+pub const MAX_COL: usize = 100;
+
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub enum ColType {
     Ladder(usize), // usize will determine where the ladder will take the player
     Snake(usize),  // usize will determine where the snake will take the player
 }
 
-#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Validate)]
 pub struct Col {
+    #[validate(range(min=0, max=99))]
     pub col_id: usize,
     pub col_type: Option<ColType>,
 }
@@ -19,7 +25,7 @@ pub struct Board {
 impl Board {
     pub fn new() -> Board {
         let mut vc = Vec::new();
-        for i in 1..=100 {
+        for i in MIN_COL..=MAX_COL {
             vc.push(Col {
                 col_id: i,
                 col_type: None,
@@ -45,7 +51,11 @@ impl Board {
                 ColType::Ladder(v) => v,
             }
         );
-        self.cols[col_id - 1].col_type = Some(ct);
+        if col_id < MIN_COL || col_id > MAX_COL {
+            println!("{:}", "Out of bounds columns set");
+        } else {
+            self.cols[col_id - 1].col_type = Some(ct);
+        }
     }
 }
 
