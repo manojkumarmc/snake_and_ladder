@@ -1,10 +1,10 @@
-#[derive(Debug)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub enum ColType {
     Ladder(usize), // usize will determine where the ladder will take the player
     Snake(usize),  // usize will determine where the snake will take the player
 }
 
-#[derive(Debug)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub struct Col {
     pub col_id: usize,
     pub col_type: Option<ColType>,
@@ -12,6 +12,7 @@ pub struct Col {
 
 #[derive(Debug)]
 pub struct Board {
+    counter: usize,
     pub cols: Vec<Col>,
 }
 
@@ -19,15 +20,15 @@ impl Board {
     pub fn new() -> Board {
         let mut vc = Vec::new();
         for i in 1..=100 {
-            vc.insert(
-                0,
-                Col {
-                    col_id: i,
-                    col_type: None,
-                },
-            )
+            vc.push(Col {
+                col_id: i,
+                col_type: None,
+            })
         }
-        Board { cols: vc }
+        Board {
+            counter: 0,
+            cols: vc,
+        }
     }
 
     pub fn get_col_data(&self, col_id: usize) {
@@ -45,6 +46,24 @@ impl Board {
             }
         );
         self.cols[col_id].col_type = Some(ct);
+    }
+}
+
+impl Iterator for Board {
+    type Item = Col;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.counter == 0 {
+            self.counter += 1;
+            Some(self.cols[0])
+        } else {
+            if self.counter <= 99 {
+                self.counter += 1;
+                Some(self.cols[self.counter - 1])
+            } else {
+                None
+            }
+        }
     }
 }
 

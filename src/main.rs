@@ -36,8 +36,9 @@ fn get_input() {
         println!("You  entered {}", buffer);
         match buffer.trim() {
             "2" => {
-                let mut rn = rand::thread_rng();
-                println!("{:#?}", board.cols[rn.gen_range(1..=100)]);
+                for b in &mut board {
+                    println!("{:?}", b);
+                }
                 wait_to_proceed();
             }
             "0" => {
@@ -51,6 +52,7 @@ fn get_input() {
                 println!("[1] List players");
                 println!("[2] Add player");
                 println!("[3] Modify column property");
+                println!("[4] List modified colums");
                 println!("___________________________");
                 io::stdin().read_line(&mut admin).unwrap();
                 match admin.trim() {
@@ -98,7 +100,7 @@ fn get_input() {
                                     wait_to_proceed();
                                 } else {
                                     println!("Good choice");
-                                    board.set_col_prop(lv, ColType::Snake(rv));
+                                    board.set_col_prop(lv - 1, ColType::Snake(rv));
                                     wait_to_proceed();
                                     break;
                                 }
@@ -109,7 +111,7 @@ fn get_input() {
                                     wait_to_proceed();
                                 } else {
                                     println!("Good choice");
-                                    board.set_col_prop(lv, ColType::Ladder(rv));
+                                    board.set_col_prop(lv - 1, ColType::Ladder(rv));
                                     wait_to_proceed();
                                     break;
                                 }
@@ -117,6 +119,9 @@ fn get_input() {
                             _ => println!("Invalid character"),
                         }
                     },
+                    "4"=> {
+                        println!("list snake and ladder columns")
+                    }
                     _ => println!("Invalid input"),
                 }
             }
