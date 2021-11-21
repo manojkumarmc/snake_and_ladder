@@ -24,6 +24,7 @@ fn get_input() {
         clear_screen();
         println!("\n________________________\n");
         println!("Please enter an option");
+        println!("        [3] Play");
         println!("        [2] Display Columns");
         println!("        [1] Admin");
         println!("        [0] Exit");
@@ -35,6 +36,14 @@ fn get_input() {
         io::stdin().read_line(&mut buffer).unwrap();
         println!("You  entered {}", buffer);
         match buffer.trim() {
+            "3" => loop {
+                println!("\n________________________");
+                for p in &player_list {
+                    println!("{:#?}", p);
+                }
+                wait_to_proceed();
+                break;
+            }
             "2" => {
                 for b in &mut board {
                     println!("{:?}", b);
