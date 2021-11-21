@@ -81,11 +81,12 @@ impl Iterator for Board {
 pub struct Player {
     id: usize,
     name: String,
+    position: usize,
 }
 
 impl Player {
     pub fn new(i: usize, n: String) -> Self {
-        Player { id: i, name: n }
+        Player { id: i, name: n , position: 0}
     }
     pub fn set_name(&mut self, n: &'static str) {
         self.name = n.to_string();

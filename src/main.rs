@@ -1,10 +1,9 @@
 use model::Player;
-use rand::prelude::*;
 use std::io;
 
 use crate::{
     model::{Board, ColType},
-    utils::{clear_screen, wait_to_proceed},
+    utils::{clear_screen, shuffle, wait_to_proceed},
 };
 
 mod model;
@@ -20,6 +19,7 @@ fn get_input() {
     let mut buffer = String::new();
     let mut board = Board::new();
     let mut player_list = get_players();
+    let mut current_player = true;
     loop {
         clear_screen();
         println!("\n________________________\n");
@@ -38,12 +38,15 @@ fn get_input() {
         match buffer.trim() {
             "3" => loop {
                 println!("\n________________________");
-                for p in &player_list {
-                    println!("{:#?}", p);
-                }
+                // for p in &player_list {
+                //     println!("{:#?}", p);
+                // }
+                println!("player is {:?}", player_list[current_player as usize]);
+                current_player = !current_player;
+                println!("Shuffled value is {}", shuffle());
                 wait_to_proceed();
-                break;
-            }
+                // break;
+            },
             "2" => {
                 for b in &mut board {
                     println!("{:?}", b);
