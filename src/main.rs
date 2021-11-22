@@ -1,8 +1,8 @@
 use model::Player;
-use std::{error::Error, io};
+use std::io;
 
 use crate::{
-    model::{Board, ColType},
+    model::{Board, ColType, MAX_COL},
     utils::{clear_screen, shuffle, wait_to_proceed},
 };
 
@@ -43,11 +43,11 @@ fn get_input() {
                 // }
                 let current_player = &mut player_list[current_player_pos as usize];
                 println!("player is {:?}", current_player);
-                let sv = shuffle();
+                let sv = shuffle(1, 6);
                 println!("Shuffled value is {}", sv);
                 current_player.move_to(sv);
 
-                if sv > 100 {
+                if sv > MAX_COL {
                     println!("The player has {:#?} reached 100, skipping", current_player);
                 } else {
                     match board.cols[current_player.position - 1].col_type {
@@ -115,26 +115,43 @@ fn get_input() {
                     }
                     "3" => {
                         clear_screen();
-                        println!("---------------------------");
-                        println!("Enter cols and type");
-                        println!("Format: <col> <S|L> <col>");
                         println!("10 S 3 => Snake with head on 10 and tail on 3");
                         println!("2 L 30 => Ladder from col 2 to col 30");
-                        println!("___________________________");
-                        let mut col_mod = String::new();
-                        col_mod.clear();
-                        io::stdin().read_line(&mut col_mod).unwrap();
-                        let cv: Vec<&str> = col_mod.split_whitespace().collect();
-                        match col_modify(&cv, &mut board) {
-                            Ok(_) => {
-                                println!("Okeyed here");
-                                wait_to_proceed();
-                                break
+                        let mut cv: Vec<String> = Vec::new();
+                        loop {
+                            let lv = shuffle(1, MAX_COL - 1);
+                            let rv = shuffle(1, MAX_COL - 1);
+                            if lv > rv {
+                                let av = format!("{} S {}", lv, rv);
+                                println!("{}", av);
+                                if !cv.contains(&av) {
+                                    cv.push(av);
+                                }
+                            } else {
+                                let bv = format!("{} L {}", lv, rv);
+                                if !cv.contains(&bv) {
+                                    cv.push(bv);
+                                }
                             }
-                            Err(e) => {
-                                println!("{:#?}", e);
+                            if cv.len() == 10 {
+                                break;
                             }
                         }
+
+                        for col_mod in cv.iter() {
+                            let col_mods: Vec<&str> = col_mod.split_whitespace().collect();
+                            match col_modify(&col_mods, &mut board) {
+                                Ok(_) => {
+                                    println!("Okeyed here");
+                                }
+                                Err(e) => {
+                                    println!("{:#?}", e);
+                                }
+                            }
+                        }
+                        println!("{:#?}", cv);
+                        wait_to_proceed();
+
                     }
                     "4" => {
                         println!("list snake and ladder columns")
@@ -203,8 +220,6 @@ fn col_modify(cv: &Vec<&str>, brd: &mut Board) -> Result<(), &'static str> {
                 Ok(())
             }
         }
-        _ => {
-            Err("Invalid character")
-        }
+        _ => Err("Invalid character"),
     }
 }

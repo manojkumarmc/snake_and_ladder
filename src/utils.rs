@@ -10,7 +10,7 @@ pub fn wait_to_proceed() {
     io::stdin().read_line(&mut input_char).unwrap();
 }
 
-pub fn shuffle() -> usize {
-    let mut rg: usize = rand::thread_rng().gen_range(1..=6);
+pub fn shuffle(l_limit: usize, u_limit: usize) -> usize {
+    let mut rg: usize = rand::thread_rng().gen_range(l_limit..=u_limit);
     rg
 }
