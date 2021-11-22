@@ -19,7 +19,7 @@ fn get_input() {
     let mut buffer = String::new();
     let mut board = Board::new();
     let mut player_list = get_players();
-    let mut current_player = true;
+    let mut current_player_pos = true;
     loop {
         clear_screen();
         println!("\n________________________\n");
@@ -41,9 +41,24 @@ fn get_input() {
                 // for p in &player_list {
                 //     println!("{:#?}", p);
                 // }
-                println!("player is {:?}", player_list[current_player as usize]);
-                current_player = !current_player;
-                println!("Shuffled value is {}", shuffle());
+                let current_player = &mut player_list[current_player_pos as usize];
+                println!("player is {:?}", current_player);
+                let sv = shuffle();
+                println!("Shuffled value is {}", sv);
+                current_player.move_to(sv);
+
+                match board.cols[current_player.position - 1].col_type.unwrap() {
+                    ColType::Snake(v) => {
+                        println!("Snake found at {}", current_player_pos);
+                        println!("{}", v);
+                    }
+                    ColType::Ladder(v) => {
+                        println!("Ladder found at {}", current_player_pos);
+                        println!("{}", v);
+                    }
+                }
+
+                current_player_pos = !current_player_pos;
                 wait_to_proceed();
                 // break;
             },
@@ -57,10 +72,11 @@ fn get_input() {
                 println!("Exit");
                 break;
             }
-            "1" => {
+            "1" => loop {
                 let mut admin = String::new();
                 admin.clear();
                 println!("___________________________");
+                println!("[0] Back");
                 println!("[1] List players");
                 println!("[2] Add player");
                 println!("[3] Modify column property");
@@ -68,6 +84,7 @@ fn get_input() {
                 println!("___________________________");
                 io::stdin().read_line(&mut admin).unwrap();
                 match admin.trim() {
+                    "0" => break,
                     "1" => {
                         println!("Player list");
                         for pl in player_list.iter() {
@@ -91,7 +108,7 @@ fn get_input() {
                             wait_to_proceed();
                         }
                     }
-                    "3" => loop {
+                    "3" => {
                         clear_screen();
                         println!("---------------------------");
                         println!("Enter cols and type");
@@ -130,7 +147,7 @@ fn get_input() {
                                     println!("Good choice");
                                     board.set_col_prop(lv, ColType::Snake(rv));
                                     wait_to_proceed();
-                                    break;
+                                    // break;
                                 }
                             }
                             "L" => {
@@ -141,7 +158,7 @@ fn get_input() {
                                     println!("Good choice");
                                     board.set_col_prop(lv, ColType::Ladder(rv));
                                     wait_to_proceed();
-                                    break;
+                                    // break;
                                 }
                             }
                             _ => println!("Invalid character"),

@@ -81,7 +81,7 @@ impl Iterator for Board {
 pub struct Player {
     id: usize,
     name: String,
-    position: usize,
+    pub position: usize,
 }
 
 impl Player {
@@ -90,5 +90,8 @@ impl Player {
     }
     pub fn set_name(&mut self, n: &'static str) {
         self.name = n.to_string();
+    }
+    pub fn move_to(&mut self, col_id: usize) {
+        self.position += col_id
     }
 }
