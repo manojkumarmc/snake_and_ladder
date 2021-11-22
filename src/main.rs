@@ -1,5 +1,5 @@
 use model::Player;
-use std::io;
+use std::{error::Error, io};
 
 use crate::{
     model::{Board, ColType},
@@ -47,14 +47,19 @@ fn get_input() {
                 println!("Shuffled value is {}", sv);
                 current_player.move_to(sv);
 
-                match board.cols[current_player.position - 1].col_type.unwrap() {
-                    ColType::Snake(v) => {
-                        println!("Snake found at {}", current_player_pos);
-                        println!("{}", v);
-                    }
-                    ColType::Ladder(v) => {
-                        println!("Ladder found at {}", current_player_pos);
-                        println!("{}", v);
+                if sv > 100 {
+                    println!("The player has {:#?} reached 100, skipping", current_player);
+                } else {
+                    match board.cols[current_player.position - 1].col_type {
+                        Some(ColType::Snake(v)) => {
+                            println!("Snake found at {}", current_player_pos);
+                            println!("{}", v);
+                        }
+                        Some(ColType::Ladder(v)) => {
+                            println!("Ladder found at {}", current_player_pos);
+                            println!("{}", v);
+                        }
+                        None => println!("normal col"),
                     }
                 }
 
@@ -120,56 +125,23 @@ fn get_input() {
                         col_mod.clear();
                         io::stdin().read_line(&mut col_mod).unwrap();
                         let cv: Vec<&str> = col_mod.split_whitespace().collect();
-                        if cv.len().ne(&3) {
-                            println!("Invalid format");
-                            wait_to_proceed();
-                            break;
-                        }
-                        println!("{} {} {}", cv[0], cv[1], cv[2]);
-                        let lv = cv[0].parse::<usize>().unwrap_or(usize::MIN);
-                        let rv = cv[2].parse::<usize>().unwrap_or(usize::MAX);
-                        if lv < model::MIN_COL || lv > model::MAX_COL {
-                            println!("Invalid input {}", lv);
-                            wait_to_proceed();
-                            break;
-                        }
-                        if rv < model::MIN_COL || rv > model::MAX_COL {
-                            println!("Invalid input {}", rv);
-                            wait_to_proceed();
-                            break;
-                        }
-                        match cv[1] {
-                            "S" => {
-                                if rv.gt(&lv) {
-                                    println!("The tail cannot be greater than the head");
-                                    wait_to_proceed();
-                                } else {
-                                    println!("Good choice");
-                                    board.set_col_prop(lv, ColType::Snake(rv));
-                                    wait_to_proceed();
-                                    // break;
-                                }
+                        match col_modify(&cv, &mut board) {
+                            Ok(_) => {
+                                println!("Okeyed here");
+                                wait_to_proceed();
+                                break
                             }
-                            "L" => {
-                                if lv.gt(&rv) {
-                                    println!("The ladder will always have to go up");
-                                    wait_to_proceed();
-                                } else {
-                                    println!("Good choice");
-                                    board.set_col_prop(lv, ColType::Ladder(rv));
-                                    wait_to_proceed();
-                                    // break;
-                                }
+                            Err(e) => {
+                                println!("{:#?}", e);
                             }
-                            _ => println!("Invalid character"),
                         }
-                    },
+                    }
                     "4" => {
                         println!("list snake and ladder columns")
                     }
                     _ => println!("Invalid input"),
                 }
-            }
+            },
             _ => println!("Invalid input"),
         }
     }
@@ -181,4 +153,58 @@ fn get_players() -> Vec<Player> {
         pl.insert(0, Player::new(x, format!("Player{}", x)));
     }
     pl
+}
+
+fn col_modify(cv: &Vec<&str>, brd: &mut Board) -> Result<(), &'static str> {
+    if cv.len().ne(&3) {
+        println!("Invalid format");
+        wait_to_proceed();
+        return Err("Invalid Format");
+    }
+
+    println!("{} {} {}", cv[0], cv[1], cv[2]);
+    let lv = cv[0].parse::<usize>().unwrap_or(usize::MIN);
+    let rv = cv[2].parse::<usize>().unwrap_or(usize::MAX);
+
+    if lv < model::MIN_COL || lv > model::MAX_COL {
+        println!("Invalid input {}", lv);
+        wait_to_proceed();
+        return Err("Invalid input");
+    }
+
+    if rv < model::MIN_COL || rv > model::MAX_COL {
+        println!("Invalid input {}", rv);
+        wait_to_proceed();
+        return Err("Invalid input");
+    }
+
+    match cv[1] {
+        "S" => {
+            if rv.gt(&lv) {
+                println!("The tail cannot be greater than the head");
+                wait_to_proceed();
+                Err("Invalid input tail")
+            } else {
+                println!("Good choice");
+                brd.set_col_prop(lv, ColType::Snake(rv));
+                wait_to_proceed();
+                Ok(())
+            }
+        }
+        "L" => {
+            if lv.gt(&rv) {
+                println!("The ladder will always have to go up");
+                wait_to_proceed();
+                Err("Invalid input head")
+            } else {
+                println!("Good choice");
+                brd.set_col_prop(lv, ColType::Ladder(rv));
+                wait_to_proceed();
+                Ok(())
+            }
+        }
+        _ => {
+            Err("Invalid character")
+        }
+    }
 }
