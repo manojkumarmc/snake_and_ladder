@@ -2,7 +2,7 @@ use model::Player;
 use std::io;
 
 use crate::{
-    model::{Board, ColType, MAX_COL},
+    model::{Board, ColType, MAX_COL, MIN_COL},
     utils::{clear_screen, shuffle, wait_to_proceed},
 };
 
@@ -38,9 +38,6 @@ fn get_input() {
         match buffer.trim() {
             "3" => loop {
                 println!("\n________________________");
-                // for p in &player_list {
-                //     println!("{:#?}", p);
-                // }
                 let current_player = &mut player_list[current_player_pos as usize];
                 println!("player is {:?}", current_player);
                 let sv = shuffle(1, 6);
@@ -80,12 +77,12 @@ fn get_input() {
             "1" => loop {
                 let mut admin = String::new();
                 admin.clear();
-                println!("___________________________");
-                println!("[0] Back");
-                println!("[1] List players");
-                println!("[2] Add player");
-                println!("[3] Modify column property");
+                println!("----------------------------");
                 println!("[4] List modified colums");
+                println!("[3] Modify column property");
+                println!("[2] Add player");
+                println!("[1] List players");
+                println!("[0] Back");
                 println!("___________________________");
                 io::stdin().read_line(&mut admin).unwrap();
                 match admin.trim() {
@@ -119,8 +116,8 @@ fn get_input() {
                         println!("2 L 30 => Ladder from col 2 to col 30");
                         let mut cv: Vec<String> = Vec::new();
                         loop {
-                            let lv = shuffle(1, MAX_COL - 1);
-                            let rv = shuffle(1, MAX_COL - 1);
+                            let lv = shuffle(MIN_COL + 2, MAX_COL - 1);
+                            let rv = shuffle(MIN_COL + 2, MAX_COL - 1);
                             if lv > rv {
                                 let av = format!("{} S {}", lv, rv);
                                 println!("{}", av);
@@ -151,7 +148,6 @@ fn get_input() {
                         }
                         println!("{:#?}", cv);
                         wait_to_proceed();
-
                     }
                     "4" => {
                         println!("list snake and ladder columns")
