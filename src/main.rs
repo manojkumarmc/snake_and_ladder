@@ -42,11 +42,16 @@ fn get_input() {
                 println!("player is {:?}", current_player);
                 let sv = shuffle(1, 6);
                 println!("Shuffled value is {}", sv);
-                current_player.move_to(sv);
 
-                if sv > MAX_COL {
+                if current_player.position + sv > MAX_COL - 1 {
                     println!("The player has {:#?} reached 100, skipping", current_player);
+                } else if current_player.position + sv == MAX_COL - 1 {
+                    current_player.move_to(sv);
+                    println!("{:?} is the winner", current_player);
+                    wait_to_proceed();
+                    break;
                 } else {
+                    current_player.move_to(sv);
                     match board.cols[current_player.position - 1].col_type {
                         Some(ColType::Snake(v)) => {
                             println!("Snake found at {}", current_player_pos);
