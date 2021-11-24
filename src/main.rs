@@ -2,7 +2,7 @@ use model::Player;
 use std::io;
 
 use crate::{
-    model::{Board, ColType, MAX_COL, MIN_COL},
+    model::{Board, ColType, MAX_COL, MAX_SNL, MIN_COL},
     utils::{clear_screen, shuffle, wait_to_proceed},
 };
 
@@ -44,22 +44,33 @@ fn get_input() {
                 println!("Shuffled value is {}", sv);
 
                 if current_player.position + sv > MAX_COL - 1 {
-                    println!("The player has {:#?} reached 100, skipping", current_player);
+                    println!(
+                        "The player has {:#?} reached {}, skipping",
+                        current_player, MAX_COL
+                    );
                 } else if current_player.position + sv == MAX_COL - 1 {
-                    current_player.move_to(sv);
+                    current_player.move_up(sv);
                     println!("{:?} is the winner", current_player);
                     wait_to_proceed();
                     break;
                 } else {
-                    current_player.move_to(sv);
+                    current_player.move_up(sv);
+                    println!("<<<<<<<<<<<<>>>>>>>>>>>>");
+                    println!("{:?}", current_player);
                     match board.cols[current_player.position - 1].col_type {
                         Some(ColType::Snake(v)) => {
                             println!("Snake found at {}", current_player_pos);
                             println!("{}", v);
+                            current_player.move_down(current_player.position - v);
+                            println!("iiiiiiiiiiiiiiiiiiiii");
+                            println!("{:?}", current_player);
                         }
                         Some(ColType::Ladder(v)) => {
                             println!("Ladder found at {}", current_player_pos);
                             println!("{}", v);
+                            current_player.move_up(v - current_player.position );
+                            println!("jjjjjjjjjjjjjjj");
+                            println!("{:?}", current_player);
                         }
                         None => println!("normal col"),
                     }
@@ -135,7 +146,7 @@ fn get_input() {
                                     cv.push(bv);
                                 }
                             }
-                            if cv.len() == 10 {
+                            if cv.len() == MAX_SNL {
                                 break;
                             }
                         }

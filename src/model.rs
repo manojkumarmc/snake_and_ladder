@@ -1,7 +1,8 @@
 use validator::{Validate};
 
 pub const MIN_COL: usize = 1;
-pub const MAX_COL: usize = 100;
+pub const MAX_COL: usize = 20;
+pub const MAX_SNL: usize = 1;
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub enum ColType {
@@ -91,7 +92,10 @@ impl Player {
     pub fn set_name(&mut self, n: &'static str) {
         self.name = n.to_string();
     }
-    pub fn move_to(&mut self, col_id: usize) {
+    pub fn move_up(&mut self, col_id: usize) {
         self.position += col_id
+    }
+    pub fn move_down(&mut self, col_id: usize) {
+        self.position -= col_id
     }
 }
