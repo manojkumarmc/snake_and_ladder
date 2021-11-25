@@ -95,14 +95,21 @@ impl Player {
             position: 0,
         }
     }
+
     pub fn set_name(&mut self, n: &'static str) {
         self.name = n.to_string();
     }
+
     pub fn move_up(&mut self, col_id: usize) {
         self.position += col_id
     }
+
     pub fn move_down(&mut self, col_id: usize) {
         self.position -= col_id
+    }
+
+    pub fn initialize(&mut self) {
+        self.position = 0;
     }
 }
 

@@ -18,8 +18,8 @@ fn main() {
 fn get_input() {
     let mut buffer = String::new();
     let mut board = Board::new();
-    let mut player_list = get_players();
     let mut current_player_pos = true;
+    let mut player_list: Vec<Player> = get_players();
     loop {
         clear_screen();
         println!("\n________________________\n");
@@ -36,46 +36,51 @@ fn get_input() {
         io::stdin().read_line(&mut buffer).unwrap();
         println!("You  entered {}", buffer);
         match buffer.trim() {
-            "3" => loop {
-                println!("\n________________________");
-                let current_player = &mut player_list[current_player_pos as usize];
-                println!("{}", current_player);
-                let sv = shuffle(1, 6);
-                println!("Shuffled value is {}", sv);
-
-                if current_player.position + sv > MAX_COL - 1 {
-                    println!( "{} - out of bounds, skipping", current_player);
-                } else if current_player.position + sv == MAX_COL - 1 {
-                    current_player.move_up(sv);
-                    println!("🏆 {} 🏁 ", current_player);
-                    wait_to_proceed();
-                    break;
-                } else {
-                    current_player.move_up(sv);
-                    println!("{}", current_player);
-                    match board.cols[current_player.position - 1].col_type {
-                        Some(ColType::Snake(v)) => {
-                            println!("Snake found at {}", current_player_pos);
-                            println!("{}", v);
-                            current_player.move_down(current_player.position - v);
-                            println!("iiiiiiiiiiiiiiiiiiiii");
-                            println!("{}", current_player);
-                        }
-                        Some(ColType::Ladder(v)) => {
-                            println!("Ladder found at {}", current_player_pos);
-                            println!("{}", v);
-                            current_player.move_up(v - current_player.position );
-                            println!("jjjjjjjjjjjjjjj");
-                            println!("{}", current_player);
-                        }
-                        None => println!("normal col"),
-                    }
+            "3" => {
+                for player in &mut player_list {
+                    player.initialize();
                 }
+                loop {
+                    println!("\n________________________");
+                    let current_player = &mut player_list[current_player_pos as usize];
+                    println!("{}", current_player);
+                    let sv = shuffle(1, 6);
+                    println!("Shuffled value is {}", sv);
 
-                current_player_pos = !current_player_pos;
-                wait_to_proceed();
+                    if current_player.position + sv > MAX_COL - 1 {
+                        println!("{} - out of bounds, skipping", current_player);
+                    } else if current_player.position + sv == MAX_COL - 1 {
+                        current_player.move_up(sv);
+                        println!("🏆 {} 🏁 ", current_player);
+                        wait_to_proceed();
+                        break;
+                    } else {
+                        current_player.move_up(sv);
+                        println!("{}", current_player);
+                        match board.cols[current_player.position - 1].col_type {
+                            Some(ColType::Snake(v)) => {
+                                println!("Snake found at {}", current_player_pos);
+                                println!("{}", v);
+                                current_player.move_down(current_player.position - v);
+                                println!("iiiiiiiiiiiiiiiiiiiii");
+                                println!("{}", current_player);
+                            }
+                            Some(ColType::Ladder(v)) => {
+                                println!("Ladder found at {}", current_player_pos);
+                                println!("{}", v);
+                                current_player.move_up(v - current_player.position);
+                                println!("jjjjjjjjjjjjjjj");
+                                println!("{}", current_player);
+                            }
+                            None => println!("normal col"),
+                        }
+                    }
+
+                    current_player_pos = !current_player_pos;
+                    wait_to_proceed();
+                }
                 // break;
-            },
+            }
             "2" => {
                 for b in &mut board {
                     println!("{:?}", b);
