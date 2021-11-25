@@ -1,4 +1,6 @@
-use validator::{Validate};
+use validator::Validate;
+use std::fmt;
+use std::fmt::Display;
 
 pub const MIN_COL: usize = 1;
 pub const MAX_COL: usize = 20;
@@ -12,7 +14,7 @@ pub enum ColType {
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Validate)]
 pub struct Col {
-    #[validate(range(min=0, max=99))]
+    #[validate(range(min = 0, max = 99))]
     pub col_id: usize,
     pub col_type: Option<ColType>,
 }
@@ -87,7 +89,11 @@ pub struct Player {
 
 impl Player {
     pub fn new(i: usize, n: String) -> Self {
-        Player { id: i, name: n , position: 0}
+        Player {
+            id: i,
+            name: n,
+            position: 0,
+        }
     }
     pub fn set_name(&mut self, n: &'static str) {
         self.name = n.to_string();
@@ -97,5 +103,11 @@ impl Player {
     }
     pub fn move_down(&mut self, col_id: usize) {
         self.position -= col_id
+    }
+}
+
+impl Display for Player {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "🙂 {} is at {}", self.name, self.position + 1)
     }
 }

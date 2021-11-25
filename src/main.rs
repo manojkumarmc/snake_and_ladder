@@ -39,38 +39,34 @@ fn get_input() {
             "3" => loop {
                 println!("\n________________________");
                 let current_player = &mut player_list[current_player_pos as usize];
-                println!("player is {:?}", current_player);
+                println!("{}", current_player);
                 let sv = shuffle(1, 6);
                 println!("Shuffled value is {}", sv);
 
                 if current_player.position + sv > MAX_COL - 1 {
-                    println!(
-                        "The player has {:#?} reached {}, skipping",
-                        current_player, MAX_COL
-                    );
+                    println!( "{} - out of bounds, skipping", current_player);
                 } else if current_player.position + sv == MAX_COL - 1 {
                     current_player.move_up(sv);
-                    println!("{:?} is the winner", current_player);
+                    println!("🏆 {} 🏁 ", current_player);
                     wait_to_proceed();
                     break;
                 } else {
                     current_player.move_up(sv);
-                    println!("<<<<<<<<<<<<>>>>>>>>>>>>");
-                    println!("{:?}", current_player);
+                    println!("{}", current_player);
                     match board.cols[current_player.position - 1].col_type {
                         Some(ColType::Snake(v)) => {
                             println!("Snake found at {}", current_player_pos);
                             println!("{}", v);
                             current_player.move_down(current_player.position - v);
                             println!("iiiiiiiiiiiiiiiiiiiii");
-                            println!("{:?}", current_player);
+                            println!("{}", current_player);
                         }
                         Some(ColType::Ladder(v)) => {
                             println!("Ladder found at {}", current_player_pos);
                             println!("{}", v);
                             current_player.move_up(v - current_player.position );
                             println!("jjjjjjjjjjjjjjj");
-                            println!("{:?}", current_player);
+                            println!("{}", current_player);
                         }
                         None => println!("normal col"),
                     }
